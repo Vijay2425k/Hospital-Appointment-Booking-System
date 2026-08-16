@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Doctor Dashboard · MediCare{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Your Appointments</h1>
+  <p>Patients booked to see you.</p>
+</div>
+
+{% if appointments %}
+<div class="card" style="padding: 0;">
+  <table>
+    <tr>
+      <th>Patient</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Reason</th>
+      <th>Status</th>
+      <th></th>
+    </tr>
+    {% for appt in appointments %}
+    <tr>
+      <td>{{ appt.patient.get_full_name|default:appt.patient.username }}</td>
+      <td>{{ appt.appointment_date|date:"M d, Y" }}</td>
+      <td>{{ appt.get_time_slot_display }}</td>
+      <td>{{ appt.reason|default:"—"|truncatewords:8 }}</td>
+      <td><span class="status-badge status-{{ appt.status }}">{{ appt.get_status_display }}</span></td>
+      <td class="row-actions">
+        {% if appt.status == 'PENDING' or appt.status == 'CONFIRMED' %}
+          <form method="post" action="{% url 'appointments:mark_completed' appt.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm">Mark Completed</button>
+          </form>
+          <a href="{% url 'appointments:cancel_appointment' appt.pk %}" class="btn btn-sm btn-secondary">Cancel</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <p>No appointments booked with you yet.</p>
+</div>
+{% endif %}
+
+{% endblock %}

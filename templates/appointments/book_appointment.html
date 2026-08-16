@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Book Appointment · MediCare{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Book an Appointment</h1>
+  <p>Pick a doctor, date, and time slot. You'll get a confirmation once the doctor accepts.</p>
+</div>
+
+<div class="card form-card">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-block">Confirm Booking</button>
+  </form>
+</div>
+
+{% endblock %}

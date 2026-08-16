@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Cancel Appointment · MediCare{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Cancel Appointment?</h1>
+</div>
+
+<div class="card form-card">
+  <p>Are you sure you want to cancel your appointment with <strong>Dr. {{ appointment.doctor.user.get_full_name|default:appointment.doctor.user.username }}</strong> on <strong>{{ appointment.appointment_date|date:"M d, Y" }}</strong> at <strong>{{ appointment.get_time_slot_display }}</strong>?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger btn-block">Yes, Cancel Appointment</button>
+  </form>
+  <p style="text-align:center; margin-top: 12px;">
+    <a href="{% url 'appointments:dashboard' %}" style="color: var(--text-dim); font-size: 14px;">Never mind, go back</a>
+  </p>
+</div>
+
+{% endblock %}

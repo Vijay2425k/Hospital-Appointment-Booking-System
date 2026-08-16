@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}MediCare Hospital{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="{% url 'appointments:doctor_list' %}" class="brand">
+    <span class="brand-mark">+</span> MediCare
+  </a>
+  <div class="nav-links">
+    {% if user.is_authenticated %}
+      <a href="{% url 'appointments:doctor_list' %}">Find a Doctor</a>
+      <a href="{% url 'appointments:dashboard' %}">Dashboard</a>
+      {% if user.is_patient %}<a href="{% url 'appointments:book_appointment' %}" class="nav-cta">Book Appointment</a>{% endif %}
+      <form method="post" action="{% url 'accounts:logout' %}" class="logout-form">
+        {% csrf_token %}
+        <button type="submit" class="link-button">Logout ({{ user.username }})</button>
+      </form>
+    {% else %}
+      <a href="{% url 'appointments:doctor_list' %}">Find a Doctor</a>
+      <a href="{% url 'accounts:login' %}">Login</a>
+      <a href="{% url 'accounts:register' %}" class="nav-cta">Sign Up</a>
+    {% endif %}
+  </div>
+</nav>
+
+<main class="container">
+  {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+        <div class="message message-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  <p>MediCare Hospital Appointment System &middot; Built with Django</p>
+</footer>
+
+</body>
+</html>

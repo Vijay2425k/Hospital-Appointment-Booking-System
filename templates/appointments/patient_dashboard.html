@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}My Appointments · MediCare{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>My Appointments</h1>
+  <p>Everything you've booked, past and upcoming.</p>
+</div>
+
+{% if appointments %}
+<div class="card" style="padding: 0;">
+  <table>
+    <tr>
+      <th>Doctor</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Status</th>
+      <th></th>
+    </tr>
+    {% for appt in appointments %}
+    <tr>
+      <td>Dr. {{ appt.doctor.user.get_full_name|default:appt.doctor.user.username }} <br><span style="color:#64748b;font-size:12.5px;">{{ appt.doctor.specialization }}</span></td>
+      <td>{{ appt.appointment_date|date:"M d, Y" }}</td>
+      <td>{{ appt.get_time_slot_display }}</td>
+      <td><span class="status-badge status-{{ appt.status }}">{{ appt.get_status_display }}</span></td>
+      <td>
+        {% if appt.status == 'PENDING' or appt.status == 'CONFIRMED' %}
+          <a href="{% url 'appointments:cancel_appointment' appt.pk %}" class="btn btn-sm btn-secondary">Cancel</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <p>You don't have any appointments yet.</p>
+  <a href="{% url 'appointments:doctor_list' %}" class="btn">Find a Doctor</a>
+</div>
+{% endif %}
+
+{% endblock %}

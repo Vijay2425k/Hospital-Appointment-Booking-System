@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Find a Doctor · MediCare{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Find a Doctor</h1>
+  <p>Browse available doctors and book an appointment in a few clicks.</p>
+</div>
+
+<form method="get" class="filter-bar">
+  <select name="specialization" onchange="this.form.submit()">
+    <option value="">All specializations</option>
+    {% for spec in specializations %}
+      <option value="{{ spec }}" {% if spec == selected_specialization %}selected{% endif %}>{{ spec }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+{% if doctors %}
+<div class="doctor-grid">
+  {% for doctor in doctors %}
+    <div class="doctor-card">
+      <div class="doctor-avatar">{{ doctor.user.first_name|first|default:"D" }}{{ doctor.user.last_name|first }}</div>
+      <h3>Dr. {{ doctor.user.get_full_name|default:doctor.user.username }}</h3>
+      <span class="specialization">{{ doctor.specialization }}</span>
+      <p class="fee">Consultation fee: ₹{{ doctor.consultation_fee }}</p>
+      {% if doctor.bio %}<p class="bio">{{ doctor.bio|truncatewords:16 }}</p>{% endif %}
+      {% if user.is_authenticated and user.is_patient %}
+        <a href="{% url 'appointments:book_appointment' %}?doctor={{ doctor.id }}" class="btn btn-block">Book Appointment</a>
+      {% elif not user.is_authenticated %}
+        <a href="{% url 'accounts:login' %}" class="btn btn-block btn-secondary">Login to Book</a>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <p>No doctors found{% if selected_specialization %} for "{{ selected_specialization }}"{% endif %}.</p>
+</div>
+{% endif %}
+
+{% endblock %}
